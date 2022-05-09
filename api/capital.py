@@ -10,14 +10,14 @@ class handler(BaseHTTPRequestHandler):
         dic = dict(query_string_list)
 
         if 'name' in dic:
-            url = "https://restcountries.com/v3.1/name"
+            url = "https://restcountries.com/v3.1/name/"
             query = dic['name']
             full_url = url + query
             response = requests.get(full_url)
             data = response.json()
-            country = str(data[0]["name"]["common"])
-            capital = str(data[0]['capital'])
-            message = f'The capital of {country} is {capital}'
+            capital = data[0]['capital']
+            capital = str(capital[0])
+            message = f'The capital of {query} is {capital}'
             self.send_response(200)
             self.send_header('Content-type', 'text/plain')
             self.end_headers()
