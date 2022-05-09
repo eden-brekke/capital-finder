@@ -14,13 +14,13 @@ class handler(BaseHTTPRequestHandler):
             full_url = url + query
             response = requests.get(full_url)
             data = response.json()
-            capital = data[0]['capital']
-            message = str(capital[0])
-            print_message = f'The capital of {query} is {message}'
+            country = str(data[0]["name"]["common"])
+            capital = str(data[0]['capital'])
+            message = f'The capital of {country} is {capital}'
             self.send_response(200)
             self.send_header('Content-type', 'text/plain')
             self.end_headers()
-            self.wfile.write(print_message.encode())
+            self.wfile.write(message.encode())
         else:
             message = "Oh no! Please type a country in as your query and then we will give you the capital city!"
             self.send_response(200)

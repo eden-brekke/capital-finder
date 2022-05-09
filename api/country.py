@@ -1,11 +1,31 @@
 from http.server import BaseHTTPRequestHandler
-from datetime import datetime
+from urllib import parse
+import requests
 
 class handler(BaseHTTPRequestHandler):
 
     def do_GET(self):
-        self.send_response(200)
-        self.send_header('Content-type', 'text/plain')
-        self.end_headers()
-        self.wfile.write(str(datetime.now().strftime('%Y-%m-%d %H:%M:%S')).encode())
+        url_components = parse.urlsplit(self.path)
+        query_string_list = parse.parse_qsl(url_components.query)
+        dic = dict(query_string_list)
+
+        if "capital" in dic:
+            url = "https://restcountries.com/v3.1/capital"
+            query = dic['capital']
+            full_url = url + query
+            response = requests.get(full_url)
+            data = response.json()
+            country = str(data[0]["name"]["common"])
+            capital = str(data[0]['capital'][0])
+            message = f"{capital} is the Capital of {country}"
+            self.send_response(200)
+            self.send_header('Content-type', 'text/plain')
+            self.end_headers()
+            self.wfile.write(message.encode())
+        else:
+            message = "Oops! Please type a country in as your query and then we'll try again!"
+            self.send_response(200)
+            self.send_header('Content-type', 'text/plain')
+            self.end_headers()
+            self.wfile.write(message.encode())
         return
