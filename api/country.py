@@ -9,21 +9,21 @@ class handler(BaseHTTPRequestHandler):
         query_string_list = parse.parse_qsl(url_components.query)
         dic = dict(query_string_list)
 
-        if "capital" in dic:
+        if "name" in dic:
             url = "https://restcountries.com/v3.1/capital"
-            query = dic['capital']
+            query = dic['name']
             full_url = url + query
             response = requests.get(full_url)
             data = response.json()
-            country = str(data[0]["name"]["common"])
-            capital = str(data[0]['capital'][0])
-            message = f"{capital} is the Capital of {country}"
+            country = data[0]['name']
+            message = str(country['common'])
+            final_message = f"{query} is the Capital of {country}"
             self.send_response(200)
             self.send_header('Content-type', 'text/plain')
             self.end_headers()
-            self.wfile.write(message.encode())
+            self.wfile.write(final_message.encode())
         else:
-            message = "Oops! Please type a country in as your query and then we'll try again!"
+            message =  "Please type a Capital in as your query to the url and then we'll find the Country!"
             self.send_response(200)
             self.send_header('Content-type', 'text/plain')
             self.end_headers()
